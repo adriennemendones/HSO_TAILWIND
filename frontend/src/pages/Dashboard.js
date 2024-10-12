@@ -13,6 +13,29 @@ export default function Dashboard() {
   const [shake, setShake] = useState(false);
   const settingsMenuRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // Search term for global search
+
+  // Sample data that can be used across multiple sections
+  const announcements = [
+    "Announcement content goes here...",
+    "Another announcement content...",
+    "More announcements...",
+    "Even more announcements...",
+    "Keep adding announcements...",
+    "Don't forget to scroll!",
+    "Announcement content goes here...",
+    "Another announcement content...",
+    "More announcements...",
+    "Even more announcements...",
+    "Keep adding announcements...",
+    "Don't forget to scroll!",
+    "Announcement content goes here...",
+    "Another announcement content...",
+    "More announcements...",
+    "Even more announcements...",
+    "Keep adding announcements...",
+    "Don't forget to scroll!",
+  ];
 
   useEffect(() => {
     const shakeInterval = setInterval(() => {
@@ -67,11 +90,31 @@ export default function Dashboard() {
     navigate('/login');
   };
 
+  // Function to highlight matching keywords
+  const highlightText = (text) => {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'gi'); // Create a regex for highlighting
+    return text.split(regex).map((part, index) => 
+      regex.test(part) ? <span key={index} className="bg-yellow-300">{part}</span> : part
+    );
+  };
+
+  // Filtered announcements based on the search term
+  const filteredAnnouncements = announcements.filter(announcement =>
+    announcement.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="flex min-h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
-      <aside className={`bg-white shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-        <div className="p-4 text-center">
+      <aside
+        className={`shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+        style={{
+          background: 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
+          backgroundSize: '200% 200%',
+        }}
+        >
+        <div className="p-4 text-center border-b border-gray-300">
           <img 
             src="/images/BELL.png" 
             alt="Logo" 
@@ -81,31 +124,31 @@ export default function Dashboard() {
         <nav className="mt-6">
           <ul className="space-y-1">
             <li>
-              <a href="#" className="flex items-center px-4 py-1 text-gray-600 hover:bg-maroon hover:text-white transition-colors duration-300">
+              <a onClick={() => navigate('/dashboard')}className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaChartBar className="w-5 h-5 mr-2" />
                 Dashboard
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-4 py-1 text-gray-600 hover:bg-maroon hover:text-white transition-colors duration-300">
+              <a onClick={() => navigate('/reports')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaExclamationCircle className="w-5 h-5 mr-2" />
                 Incident Report
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-4 py-1 text-gray-600 hover:bg-maroon hover:text-white transition-colors duration-300">
+              <a href="#" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaFileAlt className="w-5 h-5 mr-2" />
                 Create Announcements
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-4 py-1 text-gray-600 hover:bg-maroon hover:text-white transition-colors duration-300">
+              <a href="#" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaClipboardList className="w-5 h-5 mr-2" />
                 Upload Programs
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-4 py-1 text-gray-600 hover:bg-maroon hover:text-white transition-colors duration-300">
+              <a href="#" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaPaintBrush className="w-5 h-5 mr-2" />
                 Color Wheel Legend
               </a>
@@ -118,91 +161,99 @@ export default function Dashboard() {
       <main className="flex-1 p-4 md:ml-64 flex flex-col md:flex-row">
         <div className="flex-1">
           {/* Search bar and user settings */}
-          <div className="flex justify-between items-center bg-white p-2 rounded-lg shadow mb-4">
+          <div className="flex justify-between items-center bg-maroon p-2 rounded-lg shadow mb-4">
             <div className="flex items-center">
-              <FaSearch className="w-4 h-4 mr-1 text-gray-400" />
+              <FaSearch className="w-4 h-4 mr-1 text-white" /> {/* Changed color to white */}
               <input
                 type="text"
                 placeholder="Search"
                 className="bg-gray-100 border-0 p-1 rounded-lg flex-grow focus:outline-none focus:ring focus:ring-gray-200 text-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} // Update search term
               />
             </div>
             <div className="flex items-center space-x-2 relative">
-              <FaBell className="w-5 h-5 text-gray-600 hover:text-maroon cursor-pointer" />
-              <FaUserCircle className="w-5 h-5 text-gray-600 hover:text-maroon cursor-pointer" />
+              <FaBell className="w-5 h-5 text-white hover:text-yellow-400  cursor-pointer" /> {/* Changed color to white */}
+              <FaUserCircle className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" /> {/* Changed color to white */}
               <div className="relative">
                 <FaCog 
-                  className="w-5 h-5 text-gray-600 hover:text-maroon cursor-pointer" 
+                  className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" // Changed color to white 
                   onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
                 />
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                     <ul className="py-2">
-                      <li className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm" onClick={() => handleLogout()}>Logout</li>
+
                       <li className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm">Settings</li>
                       <li className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm">Help</li>
+                      <li className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm" onClick={() => handleLogout()}>Logout</li>
                     </ul>
                   </div>
                 )}
               </div>
-              <FaBars className="w-5 h-5 text-gray-600 hover:text-maroon cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)} />
+              <FaBars className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)} /> {/* Changed color to white */}
             </div>
           </div>
 
-          {/* Today's Money Card */}
-          <div className="bg-white p-2 rounded-lg shadow-md mb-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700">Today's Money</h3>
-                <p className="text-xl font-bold text-green-500">$53k</p>
-                <p className="text-xs text-green-400">+55% than last week</p>
-              </div>
-              <FaDollarSign className="w-6 h-6 text-gray-400" />
+          {/* Announcements Card */}
+          <div className="bg-white p-2 rounded-lg shadow-md mb-4 flex-1 overflow-hidden h-96">
+            <h3 className="text-lg font-bold text-maroon text-center uppercase">ANNOUNCEMENTS</h3>
+            <div className="mt-2 h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+              {filteredAnnouncements.length > 0 ? (
+                filteredAnnouncements.map((announcement, index) => (
+                  <p key={index} className="text-sm text-gray-600">
+                    {highlightText(announcement)} {/* Highlight matching text */}
+                  </p>
+                ))
+              ) : (
+                <p className="text-sm text-gray-600">Nothing found.</p>
+              )}
             </div>
           </div>
-        </div>
 
-        {/* Calendar Section on the right side */}
-        <div className="md:w-1/3 bg-white shadow-md rounded-lg p-4 ml-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">Calendar - {calendarYear}</h2>
-          <div className="flex justify-between mb-2">
-            <button onClick={() => handleMonthChange(-1)} className="text-gray-600 hover:text-gray-900">◀</button>
-            <span className="font-bold">{new Date(calendarYear, currentMonth).toLocaleString('default', { month: 'long' })}</span>
-            <button onClick={() => handleMonthChange(1)} className="text-gray-600 hover:text-gray-900">▶</button>
-          </div>
-          <div className="grid grid-cols-7 gap-1">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center font-bold text-xs">{day}</div>
-            ))}
-            {[...Array(firstDayOfMonth)].map((_, index) => (
-              <div key={index} className="border p-1 text-center"></div>
-            ))}
-            {[...Array(daysInMonth)].map((_, index) => {
-              const day = index + 1;
-              const isToday = today.getDate() === day && today.getMonth() === currentMonth && today.getFullYear() === calendarYear;
-              return (
-                <div
-                  key={index}
-                  className={`border p-1 text-center cursor-pointer hover:bg-gray-200 ${isToday ? 'bg-yellow-300' : ''}`}
-                  onClick={() => handleDateClick(day)}
-                >
-                  {day}
-                </div>
-              );
-            })}
+          {/* Calendar Section below Announcements */}
+          <div className="bg-white shadow-md rounded-lg p-2 w-full">
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">Calendar - {calendarYear}</h2>
+            <div className="flex justify-between mb-1">
+              <button onClick={() => handleMonthChange(-1)} className="text-gray-600 hover:text-gray-900 text-xs">◀</button>
+              <span className="font-bold text-xs">{new Date(calendarYear, currentMonth).toLocaleString('default', { month: 'long' })}</span>
+              <button onClick={() => handleMonthChange(1)} className="text-gray-600 hover:text-gray-900 text-xs">▶</button>
+            </div>
+            <div className="grid grid-cols-7 gap-0.5">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                <div key={day} className="text-center font-bold text-xs">{day}</div>
+              ))}
+              {[...Array(firstDayOfMonth)].map((_, index) => (
+                <div key={index} className="border p-0 text-center h-8"></div>
+              ))}
+              {[...Array(daysInMonth)].map((_, index) => {
+                const day = index + 1;
+                const isToday = today.getDate() === day && today.getMonth() === currentMonth && today.getFullYear() === calendarYear;
+                return (
+                  <div
+                    key={index}
+                    className={`border p-0 text-center cursor-pointer hover:bg-gray-200 h-8 ${isToday ? 'bg-yellow-300' : ''}`}
+                    onClick={() => handleDateClick(day)}
+                  >
+                    <span className="text-xs">{day}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Today's Activity Section inside Calendar */}
+            <h2 className="text-lg font-semibold text-gray-700 mt-2">Today's Activity</h2>
+            <ul className="mt-1 text-xs">
+              {todayEvents.length > 0 ? (
+                todayEvents.map((event, index) => (
+                  <li key={index} className="text-gray-600">✔️ {event.text}</li>
+                ))
+              ) : (
+                <li className="text-gray-400">No events for today.</li>
+              )}
+            </ul>
           </div>
 
-          {/* Today's Activity Section inside Calendar */}
-          <h2 className="text-lg font-semibold text-gray-700 mt-4">Today's Activity</h2>
-          <ul className="mt-2">
-            {todayEvents.length > 0 ? (
-              todayEvents.map((event, index) => (
-                <li key={index} className="text-gray-600 text-xs">✔️ {event.text}</li>
-              ))
-            ) : (
-              <li className="text-gray-400 text-xs">No events for today.</li>
-            )}
-          </ul>
         </div>
       </main>
 
@@ -228,5 +279,4 @@ export default function Dashboard() {
     </div>
   );
 }
-
 //
