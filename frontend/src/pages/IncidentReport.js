@@ -175,19 +175,19 @@ export default function IncidentReport() {
               </a>
             </li>
             <li>
-              <a href="/create-announcement" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a href="/create" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaFileAlt className="w-5 h-5 mr-2" />
                 Create Announcements
               </a>
             </li>
             <li>
-              <a href="/upload-program" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a href="/upload" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaClipboardList className="w-5 h-5 mr-2" />
                 Upload Programs
               </a>
             </li>
             <li>
-              <a href="/color-wheel" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a href="/color" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaPaintBrush className="w-5 h-5 mr-2" />
                 Color Wheel Legend
               </a>
@@ -221,9 +221,9 @@ export default function IncidentReport() {
               {showSettingsMenu && (
                 <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                   <ul className="py-2">
-                    <li className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm">Settings</li>
-                    <li className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm">Help</li>
-                    <li className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm" onClick={handleLogout}>Logout</li>
+                  <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer ">Settings</li>
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleLogout()}>Logout</li>
                   </ul>
                 </div>
               )}
@@ -233,12 +233,12 @@ export default function IncidentReport() {
         </div>
 
         {/* Incident Reports Display */}
-        <div className="bg-white p-4 rounded-lg shadow-md flex-grow flex flex-col">
+        <div className="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-500 flex-grow flex flex-col">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-maroon">Incident Reports</h2>
+            <h2 className="text-2xl font-bold text-maroon">Incident Reports</h2>
             <div className="relative">
               <button 
-                className="flex items-center bg-gray-300 text-gray-700 px-4 py-2 rounded shadow hover:bg-orange-200"
+                className="flex items-center bg-gray-300 text-gray-700 px-4 py-2 rounded shadow hover:bg-blue-200"
                 onClick={() => setShowFilterMenu(!showFilterMenu)} // Toggle filter menu
               >
                 <FaSort className="mr-2" /> Sort/Filter
@@ -248,25 +248,25 @@ export default function IncidentReport() {
                   <h3 className="text-lg font-semibold">Filter by Status</h3>
                   <div className="flex flex-col space-y-2">
                     <button 
-                      className={`w-full px-4 py-2 rounded ${selectedStatus === "All" ? 'bg-orange-400 text-white' : 'bg-gray-200'}`} 
+                      className={`w-full px-4 py-2 rounded ${selectedStatus === "All" ? 'bg-orange-400 text-white' : 'bg-gray-200'} hover:bg-orange-200`} 
                       onClick={() => handleStatusFilter("All")}
                     >
                       All
                     </button>
                     <button 
-                      className={`w-full px-4 py-2 rounded ${selectedStatus === "Open" ? 'bg-orange-400 text-white' : 'bg-gray-200'}`} 
+                      className={`w-full px-4 py-2 rounded ${selectedStatus === "Open" ? 'bg-orange-400 text-white' : 'bg-gray-200'} hover:bg-orange-200`} 
                       onClick={() => handleStatusFilter("Open")}
                     >
                       Open
                     </button>
                     <button 
-                      className={`w-full px-4 py-2 rounded ${selectedStatus === "Ongoing" ? 'bg-orange-400 text-white' : 'bg-gray-200'}`} 
+                      className={`w-full px-4 py-2 rounded ${selectedStatus === "Ongoing" ? 'bg-orange-400 text-white' : 'bg-gray-200'} hover:bg-orange-200`} 
                       onClick={() => handleStatusFilter("Ongoing")}
                     >
                       Ongoing
                     </button>
                     <button 
-                      className={`w-full px-4 py-2 rounded ${selectedStatus === "Resolved" ? 'bg-orange-400 text-white' : 'bg-gray-200'}`} 
+                      className={`w-full px-4 py-2 rounded ${selectedStatus === "Resolved" ? 'bg-orange-400 text-white' : 'bg-gray-200'} hover:bg-orange-200`} 
                       onClick={() => handleStatusFilter("Resolved")}
                     >
                       Resolved
@@ -279,7 +279,7 @@ export default function IncidentReport() {
           <div className="overflow-y-scroll flex-grow" style={{ maxHeight: '600px' }}>
             {filteredReports.length > 0 ? (
               filteredReports.map((report, index) => (
-                <div key={report.reportNumber} className="border p-2 mb-2 rounded shadow hover:shadow-lg transition-shadow duration-200 flex justify-between items-start">
+                <div key={report.reportNumber} className="border border-blue-300 p-4 mb-4 rounded shadow hover:shadow-lg transition-shadow duration-200 flex justify-between items-start">
                   <div className="flex flex-col">
                     <img 
                       src={report.image} 
@@ -297,7 +297,7 @@ export default function IncidentReport() {
                   {/* Dropdown for GSD and MDS */}
                   <div className="flex flex-col ml-2">
                     <select 
-                      className="select select-primary w-40 max-w-xs py-1 border border-gray-300 shadow-md rounded focus:outline-none focus:ring-2 focus:ring-orange-600" 
+                      className="select select-primary w-40 max-w-xs py-1 border border-gray-300 shadow-md rounded focus:outline-none focus:ring-2 focus:ring-orange-600 text-xs" // Made text smaller
                       value={report.selectedDepartment} 
                       onChange={(e) => handleDepartmentChange(index, e.target.value)}
                     >
