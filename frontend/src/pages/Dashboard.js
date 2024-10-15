@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUserCircle, FaSearch, FaCog, FaDollarSign, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar } from 'react-icons/fa'; 
+import { FaUserCircle, FaSearch, FaCog, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar } from 'react-icons/fa'; 
 import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
@@ -35,6 +35,25 @@ export default function Dashboard() {
     "Even more announcements...",
     "Keep adding announcements...",
     "Don't forget to scroll!",
+    "Announcement content goes here...",
+    "Another announcement content...",
+    "More announcements...",
+    "Even more announcements...",
+    "Keep adding announcements...",
+    "Don't forget to scroll!",
+    "Announcement content goes here...",
+    "Another announcement content...",
+    "More announcements...",
+    "Even more announcements...",
+    "Keep adding announcements...",
+    "Don't forget to scroll!",
+    "Announcement content goes here...",
+    "Another announcement content...",
+    "More announcements...",
+    "Even more announcements...",
+    "Keep adding announcements...",
+    "Don't forget to scroll!",
+    // ... (other announcements)
   ];
 
   useEffect(() => {
@@ -65,11 +84,6 @@ export default function Dashboard() {
     setEventInput("");
   };
 
-  const todayEvents = events.filter(event => event.date === new Date().toDateString());
-  const today = new Date();
-  const daysInMonth = new Date(calendarYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(calendarYear, currentMonth, 1).getDay();
-
   const handleMonthChange = (increment) => {
     let newMonth = currentMonth + increment;
     let newYear = calendarYear;
@@ -93,7 +107,7 @@ export default function Dashboard() {
   // Function to highlight matching keywords
   const highlightText = (text) => {
     if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi'); // Create a regex for highlighting
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, index) => 
       regex.test(part) ? <span key={index} className="bg-yellow-300">{part}</span> : part
     );
@@ -104,6 +118,8 @@ export default function Dashboard() {
     announcement.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const today = new Date().getDate(); // Current day of the month
+
   return (
     <div className="flex min-h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
@@ -113,7 +129,7 @@ export default function Dashboard() {
           background: 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
           backgroundSize: '200% 200%',
         }}
-        >
+      >
         <div className="p-4 text-center border-b border-gray-300">
           <img 
             src="/images/BELL.png" 
@@ -124,7 +140,7 @@ export default function Dashboard() {
         <nav className="mt-6">
           <ul className="space-y-1">
             <li>
-              <a onClick={() => navigate('/dashboard')}className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/dashboard')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaChartBar className="w-5 h-5 mr-2" />
                 Dashboard
               </a>
@@ -136,7 +152,7 @@ export default function Dashboard() {
               </a>
             </li>
             <li>
-              <a onClick={() => navigate('/create')}className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/create')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
                 <FaFileAlt className="w-5 h-5 mr-2" />
                 Create Announcements
               </a>
@@ -155,15 +171,49 @@ export default function Dashboard() {
             </li>
           </ul>
         </nav>
+
+        {/* Calendar Component */}
+        <div className="mt-24 mb-4 px-2 ">
+          <div className="bg-white p-4 rounded-lg shadow-md border border-gray-300 h-76">
+            
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">{`${new Date(calendarYear, currentMonth).toLocaleString('default', { month: 'long' })} ${calendarYear}`}</h2>
+            <div className="flex justify-between mb-1">
+              <button onClick={() => handleMonthChange(-1)} className="text-gray-600 hover:text-gray-900 text-xs">◀</button>
+              <span className="font-bold text-sm">{new Date(calendarYear, currentMonth).toLocaleString('default', { month: 'long' })}</span>
+              <button onClick={() => handleMonthChange(1)} className="text-gray-600 hover:text-gray-900 text-xs">▶</button>
+            </div>
+            <div className="grid grid-cols-7 gap-0.5">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                <div key={day} className="text-center font-bold text-sm">{day}</div>
+              ))}
+              {[...Array(new Date(calendarYear, currentMonth, 1).getDay())].map((_, index) => (
+                <div key={index} className="border p-0 text-center h-8"></div>
+              ))}
+              {[...Array(new Date(calendarYear, currentMonth + 1, 0).getDate())].map((_, index) => {
+                const day = index + 1;
+                const isToday = day === today;
+                return (
+                  <div
+                    key={index}
+                    className={`border p-0 text-center cursor-pointer hover:bg-gray-200 h-8 ${isToday ? 'bg-yellow-300' : ''}`} // Highlight today
+                    onClick={() => handleDateClick(day)}
+                  >
+                    <span className="text-xs">{day}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-4 md:ml-64 flex flex-col md:flex-row">
-        <div className="flex-1">
+      <main className="flex-1 p-4 md:ml-64 flex flex-col">
+        <div className="flex-1 flex flex-col"> {/* Ensure this container can grow */}
           {/* Search bar and user settings */}
           <div className="flex justify-between items-center bg-maroon p-2 rounded-lg shadow mb-4">
             <div className="flex items-center">
-              <FaSearch className="w-4 h-4 mr-1 text-white" /> {/* Changed color to white */}
+              <FaSearch className="w-4 h-4 mr-1 text-white" />
               <input
                 type="text"
                 placeholder="Search"
@@ -173,36 +223,35 @@ export default function Dashboard() {
               />
             </div>
             <div className="flex items-center space-x-2 relative">
-              <FaBell className="w-5 h-5 text-white hover:text-yellow-400  cursor-pointer" /> {/* Changed color to white */}
-              <FaUserCircle className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" /> {/* Changed color to white */}
+              <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
+              <FaUserCircle className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
               <div className="relative">
                 <FaCog 
-                  className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" // Changed color to white 
+                  className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
                   onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
                 />
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                     <ul className="py-2">
-
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer ">Settings</li>
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Settings</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleLogout()}>Logout</li>
                     </ul>
                   </div>
                 )}
               </div>
-              <FaBars className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)} /> {/* Changed color to white */}
+              <FaBars className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)} />
             </div>
           </div>
 
           {/* Announcements Card */}
-          <div className="bg-white p-2 rounded-lg shadow-md mb-4 flex-1 overflow-hidden h-96 border border-blue-500">
-            <h3 className="text-2xl   font-bold text-maroon text-center uppercase">ANNOUNCEMENTS</h3>
-            <div className="mt-2 h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          <div className="bg-white p-2 rounded-lg shadow-md flex-grow flex flex-col border border-blue-500" style={{ height: '500px' }}>
+            <h3 className="text-2xl font-bold text-maroon text-center uppercase">ANNOUNCEMENTS</h3>
+            <div className="mt-2 flex-grow overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
               {filteredAnnouncements.length > 0 ? (
                 filteredAnnouncements.map((announcement, index) => (
                   <p key={index} className="text-sm text-gray-600">
-                    {highlightText(announcement)} {/* Highlight matching text */}
+                    {highlightText(announcement)}
                   </p>
                 ))
               ) : (
@@ -210,50 +259,6 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-
-          {/* Calendar Section below Announcements */}
-          <div className="bg-white shadow-md rounded-lg p-2 w-full border border-orange-500">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">Calendar - {calendarYear}</h2>
-            <div className="flex justify-between mb-1">
-              <button onClick={() => handleMonthChange(-1)} className="text-gray-600 hover:text-gray-900 text-xs">◀</button>
-              <span className="font-bold text-xs">{new Date(calendarYear, currentMonth).toLocaleString('default', { month: 'long' })}</span>
-              <button onClick={() => handleMonthChange(1)} className="text-gray-600 hover:text-gray-900 text-xs">▶</button>
-            </div>
-            <div className="grid grid-cols-7 gap-0.5">
-              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                <div key={day} className="text-center font-bold text-xs">{day}</div>
-              ))}
-              {[...Array(firstDayOfMonth)].map((_, index) => (
-                <div key={index} className="border p-0 text-center h-8"></div>
-              ))}
-              {[...Array(daysInMonth)].map((_, index) => {
-                const day = index + 1;
-                const isToday = today.getDate() === day && today.getMonth() === currentMonth && today.getFullYear() === calendarYear;
-                return (
-                  <div
-                    key={index}
-                    className={`border p-0 text-center cursor-pointer hover:bg-gray-200 h-8 ${isToday ? 'bg-yellow-300' : ''}`}
-                    onClick={() => handleDateClick(day)}
-                  >
-                    <span className="text-xs">{day}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Today's Activity Section inside Calendar */}
-            <h2 className="text-lg font-semibold text-gray-700 mt-2">Today's Activity</h2>
-            <ul className="mt-1 text-xs">
-              {todayEvents.length > 0 ? (
-                todayEvents.map((event, index) => (
-                  <li key={index} className="text-gray-600">✔️ {event.text}</li>
-                ))
-              ) : (
-                <li className="text-gray-400">No events for today.</li>
-              )}
-            </ul>
-          </div>
-
         </div>
       </main>
 
@@ -279,4 +284,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
 //
