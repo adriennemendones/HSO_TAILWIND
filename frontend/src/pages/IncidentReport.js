@@ -212,7 +212,10 @@ export default function IncidentReport() {
           </div>
           <div className="flex items-center space-x-2 relative">
             <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
-            <FaUserCircle className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
+            <FaUserCircle 
+                className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
+                onClick={() => navigate('/profile')} // Navigate to profile on click
+            />
             <div className="relative">
               <FaCog 
                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 

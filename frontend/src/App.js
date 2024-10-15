@@ -9,6 +9,7 @@ import IncidentReport from './pages/IncidentReport';
 import CreateAnnouncements from './pages/CreateAnnouncements';
 import UploadPrograms from './pages/UploadPrograms';
 import ColorLegend from './pages/ColorLegend';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/upload" element={<UploadPrograms />}/>
         <Route path="/create" element={<CreateAnnouncements />}/>
         <Route path="/color" element={<ColorLegend />}/>
+        <Route path="/profile" element={<Profile />}/>
       </Routes>
     </Router>
   );
