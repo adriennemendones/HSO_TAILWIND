@@ -143,7 +143,7 @@ const ColorLegend = () => {
                             {profileMenuVisible && (
                                 <div ref={settingsMenuRef} className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10">
                                     <ul className="py-2">
-                                        <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => alert('Settings Clicked')}>Settings</li>
+                                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
                                         <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => alert('Help Clicked')}>Help</li>
                                         <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={logout}>Logout</li>
                                     </ul>

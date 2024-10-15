@@ -7,10 +7,11 @@ export default function CreateAnnouncements() {
   const [isOpen, setIsOpen] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [announcement, setAnnouncement] = useState("");
-  const [images, setImages] = useState([]); // Changed to an array to hold multiple images
-  const [selectedColor, setSelectedColor] = useState(""); // Default color is empty
+  const [images, setImages] = useState([]);
+  const [selectedColor, setSelectedColor] = useState("");
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const [showPostConfirmation, setShowPostConfirmation] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const settingsMenuRef = useRef(null);
 
   useEffect(() => {
@@ -31,8 +32,8 @@ export default function CreateAnnouncements() {
   };
 
   const handleImageChange = (event) => {
-    const files = Array.from(event.target.files); // Convert FileList to array
-    setImages((prevImages) => [...prevImages, ...files]); // Append new files to the images array
+    const files = Array.from(event.target.files);
+    setImages((prevImages) => [...prevImages, ...files]);
   };
 
   const handleAnnouncementChange = (event) => {
@@ -45,18 +46,13 @@ export default function CreateAnnouncements() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setShowPostConfirmation(true); // Show post confirmation modal
+    setShowPostConfirmation(true);
   };
 
   const confirmPost = () => {
-    // Logic to handle announcement submission goes here
     alert(`Announcement submitted with color: ${selectedColor}`);
-
-    // Clear the form fields after confirming post
     resetForm();
-    setShowPostConfirmation(false); // Close the confirmation modal
-
-    // Redirect to the dashboard after confirming post
+    setShowPostConfirmation(false);
     navigate('/dashboard'); 
   };
 
@@ -65,13 +61,13 @@ export default function CreateAnnouncements() {
   };
 
   const handleCancel = () => {
-    setShowCancelConfirmation(true); // Show cancel confirmation modal
+    setShowCancelConfirmation(true);
   };
 
   const confirmCancel = () => {
-    resetForm(); // Clear the form fields when cancelling
+    resetForm();
     setShowCancelConfirmation(false);
-    navigate('/dashboard'); // Redirect to dashboard or wherever you want
+    navigate('/dashboard'); 
   };
 
   const cancelCancel = () => {
@@ -80,15 +76,14 @@ export default function CreateAnnouncements() {
 
   const resetForm = () => {
     setAnnouncement("");
-    setImages([]); // Reset images
+    setImages([]);
     setSelectedColor("");
   };
 
   const removeImage = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index)); // Remove the image at the specified index
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // Map colors to text color classes
   const textColor = {
     red: 'text-red-600',
     orange: 'text-orange-600',
@@ -97,14 +92,20 @@ export default function CreateAnnouncements() {
     blue: 'text-blue-600',
   };
 
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-100 overflow-hidden">
+    <div className={`flex min-h-screen overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>
       {/* Sidebar */}
       <aside
         className={`shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         style={{
-          background: 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
-          backgroundSize: '200% 200%',
+          background: theme === 'dark' ? '#2d2d2d' : '#4a0909',
         }}
       >
         <div className="p-4 text-center border-b border-gray-300">
@@ -117,31 +118,35 @@ export default function CreateAnnouncements() {
         <nav className="mt-6">
           <ul className="space-y-1">
             <li>
-              <a href="/dashboard" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a 
+                onClick={() => navigate('/dashboard')} 
+                className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/dashboard' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaChartBar className="w-5 h-5 mr-2" />
                 Dashboard
               </a>
             </li>
             <li>
-              <a href="/reports" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/reports')} className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/reports' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaExclamationCircle className="w-5 h-5 mr-2" />
                 Incident Report
               </a>
             </li>
             <li>
-              <a href="/create" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a 
+                onClick={() => navigate('/create')} 
+                className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/create' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaFileAlt className="w-5 h-5 mr-2" />
                 Create Announcements
               </a>
             </li>
             <li>
-              <a href="/upload" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/upload')} className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/upload' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaClipboardList className="w-5 h-5 mr-2" />
                 Upload Programs
               </a>
             </li>
             <li>
-              <a href="/color" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/color')} className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/color' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaPaintBrush className="w-5 h-5 mr-2" />
                 Color Wheel Legend
               </a>
@@ -153,7 +158,7 @@ export default function CreateAnnouncements() {
       {/* Main content */}
       <main className="flex-1 p-4 md:ml-64 flex flex-col">
         {/* Search bar and user settings */}
-        <div className="flex justify-between items-center bg-maroon p-2 rounded-lg shadow mb-4">
+        <div className={`flex justify-between items-center ${theme === 'dark' ? 'bg-gray-700 text-black-700' : 'bg-maroon text-white'} p-2 rounded-lg shadow mb-4`}>
           <div className="flex items-center">
             <FaSearch className="w-4 h-4 mr-1 text-white" />
             <input
@@ -166,7 +171,7 @@ export default function CreateAnnouncements() {
             <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
             <FaUserCircle 
                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
-                onClick={() => navigate('/profile')} // Navigate to profile on click
+                onClick={() => navigate('/profile')} 
             />
             <div className="relative">
               <FaCog 
@@ -176,9 +181,9 @@ export default function CreateAnnouncements() {
               {showSettingsMenu && (
                 <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                   <ul className="py-2">
-                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer ">Settings</li>
-                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
-                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleLogout()}>Logout</li>
+                    <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black-700' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={() => navigate('/settings')}>Settings</li>
+                    <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black-700' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`}>Help</li>
+                    <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black-700' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={handleLogout}>Logout</li>
                   </ul>
                 </div>
               )}
@@ -188,28 +193,28 @@ export default function CreateAnnouncements() {
         </div>
 
         {/* Create Announcement Form */}
-        <div className="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-500 flex-grow flex flex-col" style={{ height: '500px', overflowY: 'auto' }}>
-          <h2 className="text-2xl font-bold text-maroon mb-4">Create Announcement</h2>
+        <div className={`bg-gray-50 p-6 rounded-lg shadow-md border border-gray-500 flex-grow flex flex-col ${theme === 'dark' ? 'bg-gray-800 text-white' : ''}`} style={{ height: '500px', overflowY: 'auto' }}>
+          <h2 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-maroon'}`}>Create Announcement</h2>
           <form onSubmit={handleSubmit} className="space-y-4 flex-grow">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Announcement:</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Announcement:</label>
               <textarea 
-                className={`border rounded-lg w-full p-2 text-sm flex-grow h-64 mb-2 border border-blue-300 ${textColor[selectedColor]}`} // Use dynamic text color
+                className={`border rounded-lg w-full p-2 text-sm flex-grow h-64 mb-2 border border-blue-300 ${textColor[selectedColor]} ${theme === 'dark' ? 'bg-gray-200' : 'text-black'}`} // Use dynamic text color
                 value={announcement}
                 onChange={handleAnnouncementChange}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Image:</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Upload Image:</label>
               <input 
                 type="file" 
                 accept="image/*" 
                 onChange={handleImageChange} 
                 className="border rounded-lg w-full border-gray-400 p-4 text-sm" 
-                multiple // Allow multiple file uploads
+                multiple 
               />
-              <div className="mt-2 text-sm text-gray-500">
+              <div className={`mt-2 text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-500'}`}>
                 {images.length > 0 ? `${images.length} files selected` : 'No files chosen'}
               </div>
             </div>
@@ -218,7 +223,7 @@ export default function CreateAnnouncements() {
             <div className="mt-4">
               {images.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Uploaded Images:</h3>
+                  <h3 className={`text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Uploaded Images:</h3>
                   <ul className="list-disc pl-5">
                     {images.map((file, index) => (
                       <li key={index} className="flex justify-between items-center mb-2">
@@ -232,9 +237,9 @@ export default function CreateAnnouncements() {
             </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex-grow">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Select Color Code:</label>
+                <label className="block text-sm font-semibold text-black-700 mb-2">Select Color Code:</label>
                 <select 
-                  className={`border rounded-lg w-full border-gray-400 p-3 text-sm ${textColor[selectedColor]}`} // Change text color based on selected color
+                  className={`border rounded-lg w-full border-gray-400 bg-gray-900 p-3 text-sm ${textColor[selectedColor]}`} // Change text color based on selected color
                   value={selectedColor} 
                   onChange={handleColorChange}
                   required // Make selection mandatory
@@ -249,7 +254,7 @@ export default function CreateAnnouncements() {
               </div>
               <button 
                 className="mt-8 px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ml-6"
-                onClick={() => navigate('/color')} // Redirect to color wheel legend page
+                onClick={() => navigate('/color')} 
               >
                 View Color Legend
               </button>
@@ -265,7 +270,7 @@ export default function CreateAnnouncements() {
               <button 
                 type="submit" 
                 className={`px-2 mt-4 py-2 bg-maroon text-white rounded-lg transition duration-300 ${selectedColor && announcement ? '' : 'bg-gray-400 text-gray-600 cursor-not-allowed'}`}
-                disabled={!selectedColor || !announcement} // Disable if requirements not met
+                disabled={!selectedColor || !announcement} 
               >
                 Post Announcement
               </button>

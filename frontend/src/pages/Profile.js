@@ -122,7 +122,7 @@ const Profile = () => {
 
       {/* Main content */}
       <main className="flex-1 p-4 md:ml-64 flex flex-col">
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col"> {/* Ensure this container can grow */}
           {/* Search bar and user settings */}
           <div className="flex justify-between items-center bg-maroon p-2 rounded-lg shadow mb-4">
             <div className="flex items-center">
@@ -149,7 +149,7 @@ const Profile = () => {
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                     <ul className="py-2">
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Settings</li>
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={handleLogout}>Logout</li>
                     </ul>
@@ -161,7 +161,7 @@ const Profile = () => {
           </div>
 
           {/* Profile Settings Form */}
-          <div className="flex-grow p-6 bg-gray-900 text-white rounded-lg shadow-md h-[600px]"> {/* Fixed height */}
+          <div className="flex-grow p-6 bg-gray-900 text-white rounded-lg shadow-md overflow-y-auto"> {/* Enable scrolling on smaller screens */}
             <h1 className="text-2xl font-semibold mb-4">Information Display</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Profile Picture Section */}
@@ -191,6 +191,9 @@ const Profile = () => {
                 <div>
                   <p className="text-lg font-semibold">{displayName}</p>
                   <p className="text-sm text-gray-400">{email}</p>
+                  <p className="text-sm text-gray-300 cursor-pointer" onClick={() => navigate('/settings')}>
+                  Go to Settings
+                </p>
                 </div>
               </div>
 
@@ -219,6 +222,7 @@ const Profile = () => {
                   required
                 />
               </div>
+
 
               {/* Password Change Section */}
               <h2 className="text-lg font-semibold mt-6">Change Password</h2>

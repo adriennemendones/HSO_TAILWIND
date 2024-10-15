@@ -224,7 +224,7 @@ export default function IncidentReport() {
               {showSettingsMenu && (
                 <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                   <ul className="py-2">
-                  <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer ">Settings</li>
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleLogout()}>Logout</li>
                   </ul>

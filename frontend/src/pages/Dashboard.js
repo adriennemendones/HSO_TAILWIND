@@ -24,36 +24,7 @@ export default function Dashboard() {
     "Keep adding announcements...",
     "Don't forget to scroll!",
     "Announcement content goes here...",
-    "Another announcement content...",
-    "More announcements...",
-    "Even more announcements...",
-    "Keep adding announcements...",
-    "Don't forget to scroll!",
-    "Announcement content goes here...",
-    "Another announcement content...",
-    "More announcements...",
-    "Even more announcements...",
-    "Keep adding announcements...",
-    "Don't forget to scroll!",
-    "Announcement content goes here...",
-    "Another announcement content...",
-    "More announcements...",
-    "Even more announcements...",
-    "Keep adding announcements...",
-    "Don't forget to scroll!",
-    "Announcement content goes here...",
-    "Another announcement content...",
-    "More announcements...",
-    "Even more announcements...",
-    "Keep adding announcements...",
-    "Don't forget to scroll!",
-    "Announcement content goes here...",
-    "Another announcement content...",
-    "More announcements...",
-    "Even more announcements...",
-    "Keep adding announcements...",
-    "Don't forget to scroll!",
-    // ... (other announcements)
+    // Add more announcements as needed...
   ];
 
   useEffect(() => {
@@ -126,8 +97,7 @@ export default function Dashboard() {
       <aside
         className={`shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         style={{
-          background: 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
-          backgroundSize: '200% 200%',
+          background: '#4a0909', // Solid maroon for light theme
         }}
       >
         <div className="p-4 text-center border-b border-gray-300">
@@ -140,7 +110,7 @@ export default function Dashboard() {
         <nav className="mt-6">
           <ul className="space-y-1">
             <li>
-              <a onClick={() => navigate('/dashboard')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/dashboard')} className="flex items-center px-4 py-2 text-white bg-gray-400 rounded"> {/* Highlight on current page */}
                 <FaChartBar className="w-5 h-5 mr-2" />
                 Dashboard
               </a>
@@ -173,9 +143,8 @@ export default function Dashboard() {
         </nav>
 
         {/* Calendar Component */}
-        <div className="mt-24 mb-4 px-2 ">
+        <div className="mt-24 mb-4 px-2">
           <div className="bg-white p-4 rounded-lg shadow-md border border-gray-300 h-76">
-            
             <h2 className="text-xl font-semibold text-gray-700 mb-2">{`${new Date(calendarYear, currentMonth).toLocaleString('default', { month: 'long' })} ${calendarYear}`}</h2>
             <div className="flex justify-between mb-1">
               <button onClick={() => handleMonthChange(-1)} className="text-gray-600 hover:text-gray-900 text-xs">◀</button>
@@ -236,7 +205,7 @@ export default function Dashboard() {
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                     <ul className="py-2">
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Settings</li>
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleLogout()}>Logout</li>
                     </ul>
