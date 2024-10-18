@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUserCircle, FaSearch, FaCog, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar } from 'react-icons/fa'; 
+import { FaUserCircle, FaSearch, FaCog, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar, FaChartLine } from 'react-icons/fa'; 
 import { useNavigate } from 'react-router-dom';
 
 export default function UploadPrograms() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-  const [who, setWho] = useState(""); // Text area for WHO
-  const [what, setWhat] = useState(""); // Text area for WHAT
-  const [whenDate, setWhenDate] = useState(""); // Date selector for WHEN
-  const [whenTime, setWhenTime] = useState(""); // Time selector for WHEN
-  const [where, setWhere] = useState(""); // Dropdown menu for WHERE
-  const [images, setImages] = useState([]); // Array to hold multiple images
+  const [who, setWho] = useState(""); 
+  const [what, setWhat] = useState(""); 
+  const [whenDate, setWhenDate] = useState(""); 
+  const [whenTime, setWhenTime] = useState(""); 
+  const [where, setWhere] = useState(""); 
+  const [otherLocation, setOtherLocation] = useState(""); 
+  const [images, setImages] = useState([]); 
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const [showPostConfirmation, setShowPostConfirmation] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const settingsMenuRef = useRef(null);
 
   useEffect(() => {
@@ -29,13 +31,18 @@ export default function UploadPrograms() {
     };
   }, []);
 
+  useEffect(() => {
+    // Apply the current theme to the document
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   const handleLogout = () => {
     navigate('/login');
   };
 
   const handleImageChange = (event) => {
-    const files = Array.from(event.target.files); // Convert FileList to array
-    setImages((prevImages) => [...prevImages, ...files]); // Append new files to the images array
+    const files = Array.from(event.target.files);
+    setImages((prevImages) => [...prevImages, ...files]);
   };
 
   const handleWhoChange = (event) => {
@@ -48,17 +55,10 @@ export default function UploadPrograms() {
 
   const handleWhenDateChange = (event) => {
     const dateValue = event.target.value;
-    
-    // Regular expression to match valid date format (YYYY-MM-DD)
     const isValidDateFormat = /^\d{4}-\d{2}-\d{2}$/.test(dateValue);
-    
-    // Check if year is four digits
-    const year = dateValue.split('-')[0]; // Get the year part
+    const year = dateValue.split('-')[0]; 
     if (isValidDateFormat && year.length === 4) {
       setWhenDate(dateValue);
-    } else {
-      // Optionally, you can display an error message or handle invalid input
-      console.log("Please enter a valid year in YYYY-MM-DD format.");
     }
   };
 
@@ -68,22 +68,20 @@ export default function UploadPrograms() {
 
   const handleWhereChange = (event) => {
     setWhere(event.target.value);
+    if (event.target.value !== "Others") {
+      setOtherLocation(""); // Reset otherLocation when a different option is selected
+    }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setShowPostConfirmation(true); // Show post confirmation modal
+    setShowPostConfirmation(true);
   };
 
   const confirmPost = () => {
-    // Logic to handle program submission goes here
-    alert(`Program submitted with details: WHO - ${who}, WHAT - ${what}, WHEN - ${whenDate} ${whenTime}, WHERE - ${where}`);
-
-    // Clear the form fields after confirming post
+    alert(`Program submitted with details: WHO - ${who}, WHAT - ${what}, WHEN - ${whenDate} ${whenTime}, WHERE - ${where === "Others" ? otherLocation : where}`);
     resetForm();
-    setShowPostConfirmation(false); // Close the confirmation modal
-
-    // Redirect to the dashboard after confirming post
+    setShowPostConfirmation(false);
     navigate('/dashboard'); 
   };
 
@@ -92,13 +90,13 @@ export default function UploadPrograms() {
   };
 
   const handleCancel = () => {
-    setShowCancelConfirmation(true); // Show cancel confirmation modal
+    setShowCancelConfirmation(true);
   };
 
   const confirmCancel = () => {
-    resetForm(); // Clear the form fields when cancelling
+    resetForm(); 
     setShowCancelConfirmation(false);
-    navigate('/dashboard'); // Redirect to dashboard
+    navigate('/dashboard'); 
   };
 
   const cancelCancel = () => {
@@ -111,20 +109,21 @@ export default function UploadPrograms() {
     setWhenDate("");
     setWhenTime("");
     setWhere("");
-    setImages([]); // Reset images
+    setOtherLocation(""); // Reset otherLocation
+    setImages([]); 
   };
 
   const removeImage = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index)); // Remove the image at the specified index
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index)); 
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 overflow-hidden">
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'} overflow-hidden`}>
       {/* Sidebar */}
       <aside
         className={`shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         style={{
-          background: 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
+          background: theme === 'dark' ? '#2d2d2d' : 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
           backgroundSize: '200% 200%',
         }}
       >
@@ -138,31 +137,35 @@ export default function UploadPrograms() {
         <nav className="mt-6">
           <ul className="space-y-1">
             <li>
-              <a href="/dashboard" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a 
+                onClick={() => navigate('/dashboard')} 
+                className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/dashboard' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaChartBar className="w-5 h-5 mr-2" />
                 Dashboard
               </a>
             </li>
             <li>
-              <a href="/reports" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/reports')} className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/reports' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaExclamationCircle className="w-5 h-5 mr-2" />
                 Incident Report
               </a>
             </li>
             <li>
-              <a href="/create" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a 
+                onClick={() => navigate('/create')} 
+                className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/create' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaFileAlt className="w-5 h-5 mr-2" />
                 Create Announcements
               </a>
             </li>
             <li>
-              <a href="/upload" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/upload')} className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/upload' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaClipboardList className="w-5 h-5 mr-2" />
                 Upload Programs
               </a>
             </li>
             <li>
-              <a href="/color" className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+              <a onClick={() => navigate('/color')} className={`flex items-center px-4 py-2 text-white ${window.location.pathname === '/color' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                 <FaPaintBrush className="w-5 h-5 mr-2" />
                 Color Wheel Legend
               </a>
@@ -174,7 +177,7 @@ export default function UploadPrograms() {
       {/* Main content */}
       <main className="flex-1 p-4 md:ml-64 flex flex-col">
         {/* Search bar and user settings */}
-        <div className="flex justify-between items-center bg-maroon p-2 rounded-lg shadow mb-4">
+        <div className={`flex justify-between items-center ${theme === 'dark' ? 'bg-gray-700 text-black-700' : 'bg-maroon text-white'} p-2 rounded-lg shadow mb-4`}>
           <div className="flex items-center">
             <FaSearch className="w-4 h-4 mr-1 text-white" />
             <input
@@ -184,75 +187,78 @@ export default function UploadPrograms() {
             />
           </div>
           <div className="flex items-center space-x-2 relative">
+            <FaChartLine className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" onClick={() => navigate('/analytics')} />
             <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
             <FaUserCircle 
                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
-                onClick={() => navigate('/profile')} // Navigate to profile on click
+                onClick={() => navigate('/profile')} 
             />
             <div className="relative">
               <FaCog 
                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
                 onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
               />
-              {showSettingsMenu && (
-                <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
-                  <ul className="py-2">
-                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
-                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
-                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleLogout()}>Logout</li>
-                  </ul>
-                </div>
-              )}
+            {showSettingsMenu && (
+              <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
+                <ul className="py-2">
+                  <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={() => navigate('/settings')}>Settings</li>
+                  <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`}>Help</li>
+                  <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={handleLogout}>Logout</li>
+                </ul>
+              </div>
+            )}
+
+              
             </div>
             <FaBars className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)} />
           </div>
         </div>
 
         {/* Upload Program Form */}
-        <div className="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-500 flex-grow flex flex-col" style={{ height: '500px', overflowY: 'auto' }}>
-          <h2 className="text-2xl font-bold text-maroon mb-4">Upload Program</h2>
+        <div className={`bg-gray-50 p-6 rounded-lg shadow-md border border-gray-500 flex-grow flex flex-col ${theme === 'dark' ? 'bg-gray-800 text-white' : ''}`} style={{ height: '500px', overflowY: 'auto' }}>
+          <h2 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-maroon'}`}>Upload Program</h2>
           <form onSubmit={handleSubmit} className="space-y-4 flex-grow">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">WHO:</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>WHO:</label>
               <textarea 
-                className="border rounded-lg w-full p-2 text-sm flex-grow h-20 mb-2 border border-blue-300"
+                className={`border rounded-lg w-full p-2 text-sm flex-grow h-20 mb-2 border border-blue-300 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
                 value={who}
                 onChange={handleWhoChange}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">WHAT:</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>WHAT:</label>
               <textarea 
-                className="border rounded-lg w-full p-2 text-sm flex-grow h-20 mb-2 border border-blue-300"
+                className={`border rounded-lg w-full p-2 text-sm flex-grow h-20 mb-2 border border-blue-300 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
                 value={what}
                 onChange={handleWhatChange}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">WHEN:</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>WHEN:</label>
               <div className="flex space-x-2">
                 <input 
                   type="date"
                   value={whenDate}
                   onChange={handleWhenDateChange}
-                  className="border rounded-lg p-2 w-full"
+                  className={`border rounded-lg p-2 w-full ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
                   required
                 />
                 <input 
                   type="time"
                   value={whenTime}
                   onChange={handleWhenTimeChange}
-                  className="border rounded-lg p-2 w-full"
+                  className={`border rounded-lg p-2 w-full ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
                   required
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">WHERE:</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>WHERE:</label>
               <select 
-                className="border rounded-lg w-full border-gray-400 p-3 text-sm"
+                className={`border rounded-lg w-full border-gray-400 p-3 text-sm ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
                 value={where} 
                 onChange={handleWhereChange}
                 required
@@ -261,24 +267,32 @@ export default function UploadPrograms() {
                 <option value="main">Main Campus</option>
                 <option value="north">Gymnasium</option>
                 <option value="south">Basic Education Building</option>
-                <option value="south">Library</option>
-                <option value="south">St. Bonaventure Student Center</option>
-                <option value="south">Student Lounge</option>
-                <option value="south">AEC Little Theater</option>
-
-                {/* Add more campus areas as needed */}
+                <option value="library">Library</option>
+                <option value="student_center">St. Bonaventure Student Center</option>
+                <option value="student_lounge">Student Lounge</option>
+                <option value="theater">AEC Little Theater</option>
+                <option value="others">Others</option> {/* Add Others option */}
               </select>
+              {where === "others" && ( // Conditional rendering of input when "Others" is selected
+                <input 
+                  type="text"
+                  value={otherLocation}
+                  onChange={(e) => setOtherLocation(e.target.value)}
+                  placeholder="Specify other location"
+                  className={`mt-2 border rounded-lg w-full p-2 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
+                />
+              )}
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Image:</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Upload Image:</label>
               <input 
                 type="file" 
                 accept="image/*" 
                 onChange={handleImageChange} 
                 className="border rounded-lg w-full border-gray-400 p-4 text-sm" 
-                multiple // Allow multiple file uploads
+                multiple 
               />
-              <div className="mt-2 text-sm text-gray-500">
+              <div className={`mt-2 text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-500'}`}>
                 {images.length > 0 ? `${images.length} files selected` : 'No files chosen'}
               </div>
             </div>
@@ -287,7 +301,7 @@ export default function UploadPrograms() {
             <div className="mt-4">
               {images.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Uploaded Images:</h3>
+                  <h3 className={`text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Uploaded Images:</h3>
                   <ul className="list-disc pl-5">
                     {images.map((file, index) => (
                       <li key={index} className="flex justify-between items-center mb-2">
@@ -310,7 +324,7 @@ export default function UploadPrograms() {
               <button 
                 type="submit" 
                 className={`px-2 mt-2 py-2 bg-maroon text-white rounded-lg transition duration-300 ${who && what && whenDate && whenTime && where ? '' : 'bg-gray-400 text-gray-600 cursor-not-allowed'}`}
-                disabled={!who || !what || !whenDate || !whenTime || !where} // Disable if requirements not met
+                disabled={!who || !what || !whenDate || !whenTime || !where} 
               >
                 Upload Program
               </button>

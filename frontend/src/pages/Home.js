@@ -166,7 +166,7 @@ export default function Home() {
               HALA!RMA
             </h1>
             <p className="text-base md:text-lg text-gray-700 mb-4 md:mb-6 text-center md:text-left">
-              is an application designed for the Health and Safety Office, facilitating prompt
+              is a web and mobile application designed for the Health and Safety Office, facilitating prompt
               information dissemination during critical events or unforeseen emergencies.
             </p>
             <div className="flex justify-center md:justify-start">

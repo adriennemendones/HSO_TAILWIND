@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUserCircle, FaSearch, FaCog, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar, FaEdit } from 'react-icons/fa'; 
+import { FaUserCircle, FaSearch, FaCog, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar, FaEdit, FaChartLine } from 'react-icons/fa'; 
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
@@ -16,6 +16,7 @@ const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light'); // Theme state
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -67,17 +68,24 @@ const Profile = () => {
     navigate('/login'); // Redirect to login page
   };
 
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme); // Update the attribute in the HTML
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-100 overflow-hidden">
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'} overflow-hidden`}>
       {/* Sidebar */}
       <aside
         className={`shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         style={{
-          background: 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
+          background: theme === 'dark' ? '#2d2d2d' : 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
           backgroundSize: '200% 200%',
         }}
       >
-        <div className="p-4 text-center border-b border-gray-300">
+        <div className="p-4 text-center border-b border-black"> {/* Set border color to black */}
           <img 
             src="/images/BELL.png" 
             alt="Logo" 
@@ -123,19 +131,20 @@ const Profile = () => {
       {/* Main content */}
       <main className="flex-1 p-4 md:ml-64 flex flex-col">
         <div className="flex-1 flex flex-col"> {/* Ensure this container can grow */}
-          {/* Search bar and user settings */}
-          <div className="flex justify-between items-center bg-maroon p-2 rounded-lg shadow mb-4">
+          {/* Navbar */}
+          <div className={`flex justify-between items-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-maroon'} p-2 rounded-lg shadow mb-4`}>
             <div className="flex items-center">
               <FaSearch className="w-4 h-4 mr-1 text-white" />
               <input
                 type="text"
                 placeholder="Search"
-                className="bg-gray-100 border-0 p-1 rounded-lg flex-grow focus:outline-none focus:ring focus:ring-gray-200 text-sm"
+                className={`bg-gray-100 border-0 p-1 rounded-lg flex-grow focus:outline-none focus:ring focus:ring-gray-200 text-sm ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)} // Update search term
               />
             </div>
             <div className="flex items-center space-x-2 relative">
+              <FaChartLine className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" onClick={() => navigate('/analytics')} />
               <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
               <FaUserCircle 
                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
@@ -149,9 +158,9 @@ const Profile = () => {
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                     <ul className="py-2">
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={handleLogout}>Logout</li>
+                      <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={() => navigate('/settings')}>Settings</li>
+                      <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`}>Help</li>
+                      <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={handleLogout}>Logout</li>
                     </ul>
                   </div>
                 )}
@@ -161,8 +170,8 @@ const Profile = () => {
           </div>
 
           {/* Profile Settings Form */}
-          <div className="flex-grow p-6 bg-gray-900 text-white rounded-lg shadow-md overflow-y-auto"> {/* Enable scrolling on smaller screens */}
-            <h1 className="text-2xl font-semibold mb-4">Information Display</h1>
+          <div className={`flex-grow p-6 border border-black rounded-lg shadow-md overflow-y-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} text-black`}>
+            <h1 className={`text-2xl font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Information Display</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Profile Picture Section */}
               <div className="flex items-center space-x-4">
@@ -171,7 +180,7 @@ const Profile = () => {
                     <img
                       src={preview}
                       alt="Profile Preview"
-                      className="w-24 h-24 rounded-full border border-gray-300 object-cover"
+                      className="w-24 h-24 rounded-full border border-black object-cover" // Change border color to black
                     />
                   ) : (
                     <FaUserCircle className="w-24 h-24 text-gray-300" />
@@ -189,11 +198,11 @@ const Profile = () => {
                   />
                 </div>
                 <div>
-                  <p className="text-lg font-semibold">{displayName}</p>
-                  <p className="text-sm text-gray-400">{email}</p>
-                  <p className="text-sm text-gray-300 cursor-pointer" onClick={() => navigate('/settings')}>
-                  Go to Settings
-                </p>
+                  <p className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{displayName}</p>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-black'}`}>{email}</p>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-black'} cursor-pointer`} onClick={() => navigate('/settings')}>
+                    Go to Settings
+                  </p>
                 </div>
               </div>
 
@@ -205,7 +214,7 @@ const Profile = () => {
                   id="display-name"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full p-2 border border-gray-600 rounded focus:outline-none focus:ring focus:ring-blue-200 bg-gray-700 text-white"
+                  className={`w-full p-2 border border-black rounded focus:outline-none focus:ring focus:ring-blue-200 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`} // Set border color to black in default mode
                   required
                 />
               </div>
@@ -218,14 +227,13 @@ const Profile = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-2 border border-gray-600 rounded focus:outline-none focus:ring focus:ring-blue-200 bg-gray-700 text-white"
+                  className={`w-full p-2 border border-black rounded focus:outline-none focus:ring focus:ring-blue-200 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`} // Set border color to black in default mode
                   required
                 />
               </div>
 
-
               {/* Password Change Section */}
-              <h2 className="text-lg font-semibold mt-6">Change Password</h2>
+              <h2 className={`text-lg font-semibold mt-6 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Change Password</h2>
               <div>
                 <label className="block text-gray-400 mb-1" htmlFor="current-password">Current Password</label>
                 <input
@@ -233,7 +241,7 @@ const Profile = () => {
                   id="current-password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full p-2 border border-gray-600 rounded focus:outline-none focus:ring focus:ring-blue-200 bg-gray-700 text-white"
+                  className={`w-full p-2 border border-black rounded focus:outline-none focus:ring focus:ring-blue-200 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`} // Set border color to black in default mode
                 />
               </div>
               <div>
@@ -243,7 +251,7 @@ const Profile = () => {
                   id="new-password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full p-2 border border-gray-600 rounded focus:outline-none focus:ring focus:ring-blue-200 bg-gray-700 text-white"
+                  className={`w-full p-2 border border-black rounded focus:outline-none focus:ring focus:ring-blue-200 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`} // Set border color to black in default mode
                 />
               </div>
               <div>
@@ -253,7 +261,7 @@ const Profile = () => {
                   id="confirm-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full p-2 border border-gray-600 rounded focus:outline-none focus:ring focus:ring-blue-200 bg-gray-700 text-white"
+                  className={`w-full p-2 border border-black rounded focus:outline-none focus:ring focus:ring-blue-200 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-black'}`} // Set border color to black in default mode
                 />
               </div>
 
@@ -268,8 +276,8 @@ const Profile = () => {
           {showModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 max-w-sm mx-auto">
-                <h2 className="text-lg font-semibold mb-4">Confirm Changes</h2>
-                <p>Are you sure you want to save these changes?</p>
+                <h2 className="text-lg font-semibold mb-4 text-black">Confirm Changes</h2> {/* Change text color to black */}
+                <p className="text-black">Are you sure you want to save these changes?</p> {/* Change text color to black */}
                 <div className="flex justify-end mt-4">
                   <button onClick={handleCancelSave} className="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
                   <button onClick={handleConfirmSave} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Confirm</button>
@@ -284,3 +292,5 @@ const Profile = () => {
 };
 
 export default Profile;
+
+//

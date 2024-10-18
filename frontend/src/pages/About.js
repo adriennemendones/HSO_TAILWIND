@@ -330,9 +330,9 @@ export default function AboutPage() {
             </div>
             {contentVisible.team && (
               <ul className="list-none pl-5 text-sm text-black mt-4">
-                <li>✔️ <strong>John Doe:</strong> Lead Developer</li>
-                <li>✔️ <strong>Jane Smith:</strong> UX/UI Designer</li>
-                <li>✔️ <strong>Mark Brown:</strong> Backend Engineer</li>
+                <li>✔️ <strong>Bartiana, Fritz</strong> </li>
+                <li>✔️ <strong>Mendones, Adrienne S.</strong> </li>
+                <li>✔️ <strong>Oreto, Glenn D.</strong> </li>
               </ul>
             )}
           </div>

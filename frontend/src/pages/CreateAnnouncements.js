@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUserCircle, FaSearch, FaCog, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar } from 'react-icons/fa'; 
+import { FaUserCircle, FaSearch, FaCog, FaBell, FaFileAlt, FaClipboardList, FaPaintBrush, FaExclamationCircle, FaBars, FaChartBar, FaChartLine } from 'react-icons/fa'; 
 import { useNavigate } from 'react-router-dom';
 
 export default function CreateAnnouncements() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [announcementTitle, setAnnouncementTitle] = useState(""); // State for announcement title
   const [announcement, setAnnouncement] = useState("");
   const [images, setImages] = useState([]);
   const [selectedColor, setSelectedColor] = useState("");
@@ -38,6 +39,10 @@ export default function CreateAnnouncements() {
 
   const handleAnnouncementChange = (event) => {
     setAnnouncement(event.target.value);
+  };
+
+  const handleTitleChange = (event) => { // Handle title input change
+    setAnnouncementTitle(event.target.value);
   };
 
   const handleColorChange = (event) => {
@@ -75,6 +80,7 @@ export default function CreateAnnouncements() {
   };
 
   const resetForm = () => {
+    setAnnouncementTitle(""); // Reset title
     setAnnouncement("");
     setImages([]);
     setSelectedColor("");
@@ -100,12 +106,13 @@ export default function CreateAnnouncements() {
   };
 
   return (
-    <div className={`flex min-h-screen overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'} overflow-hidden`}>
       {/* Sidebar */}
       <aside
         className={`shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
         style={{
-          background: theme === 'dark' ? '#2d2d2d' : '#4a0909',
+          background: theme === 'dark' ? '#2d2d2d' : 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
+          backgroundSize: '200% 200%',
         }}
       >
         <div className="p-4 text-center border-b border-gray-300">
@@ -168,6 +175,7 @@ export default function CreateAnnouncements() {
             />
           </div>
           <div className="flex items-center space-x-2 relative">
+            <FaChartLine className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" onClick={() => navigate('/analytics')} />
             <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
             <FaUserCircle 
                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
@@ -178,15 +186,15 @@ export default function CreateAnnouncements() {
                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
                 onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
               />
-              {showSettingsMenu && (
-                <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
-                  <ul className="py-2">
-                    <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black-700' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={() => navigate('/settings')}>Settings</li>
-                    <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black-700' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`}>Help</li>
-                    <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black-700' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={handleLogout}>Logout</li>
-                  </ul>
-                </div>
-              )}
+            {showSettingsMenu && (
+              <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
+                <ul className="py-2">
+                  <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={() => navigate('/settings')}>Settings</li>
+                  <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`}>Help</li>
+                  <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={handleLogout}>Logout</li>
+                </ul>
+              </div>
+            )}
             </div>
             <FaBars className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer md:hidden" onClick={() => setIsOpen(!isOpen)} />
           </div>
@@ -197,9 +205,19 @@ export default function CreateAnnouncements() {
           <h2 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-maroon'}`}>Create Announcement</h2>
           <form onSubmit={handleSubmit} className="space-y-4 flex-grow">
             <div>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Title:</label>
+              <input 
+                type="text"
+                className={`border rounded-lg w-full p-2 text-sm border-gray-400 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'}`}
+                value={announcementTitle}
+                onChange={handleTitleChange} // Handle title input change
+                required
+              />
+            </div>
+            <div>
               <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Announcement:</label>
               <textarea 
-                className={`border rounded-lg w-full p-2 text-sm flex-grow h-64 mb-2 border border-blue-300 ${textColor[selectedColor]} ${theme === 'dark' ? 'bg-gray-200' : 'text-black'}`} // Use dynamic text color
+                className={`border rounded-lg w-full p-2 text-sm flex-grow h-48 mb-2 border border-blue-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`} 
                 value={announcement}
                 onChange={handleAnnouncementChange}
                 required
@@ -237,12 +255,12 @@ export default function CreateAnnouncements() {
             </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex-grow">
-                <label className="block text-sm font-semibold text-black-700 mb-2">Select Color Code:</label>
+                <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>Select Color Code:</label>
                 <select 
-                  className={`border rounded-lg w-full border-gray-400 bg-gray-900 p-3 text-sm ${textColor[selectedColor]}`} // Change text color based on selected color
+                  className={`border rounded-lg w-full border-gray-400 ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'} p-3 text-sm`} 
                   value={selectedColor} 
                   onChange={handleColorChange}
-                  required // Make selection mandatory
+                  required 
                 >
                   <option value="" disabled>Select Color</option>
                   <option value="red" className="text-red-600">Red - Important</option>
@@ -253,12 +271,13 @@ export default function CreateAnnouncements() {
                 </select>
               </div>
               <button 
-                className="mt-8 px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ml-6"
+                className="mt-8 h-10 px-2 bg-blue-500 text-white rounded hover:bg-blue-600 ml-6 text-sm" // Adjust height only
                 onClick={() => navigate('/color')} 
               >
                 View Color Legend
               </button>
             </div>
+
             <div className="flex justify-between mt-2">
               <button 
                 type="button" 
@@ -269,8 +288,8 @@ export default function CreateAnnouncements() {
               </button>
               <button 
                 type="submit" 
-                className={`px-2 mt-4 py-2 bg-maroon text-white rounded-lg transition duration-300 ${selectedColor && announcement ? '' : 'bg-gray-400 text-gray-600 cursor-not-allowed'}`}
-                disabled={!selectedColor || !announcement} 
+                className={`px-2 mt-4 py-2 bg-maroon text-white rounded-lg transition duration-300 ${selectedColor && announcement && announcementTitle ? '' : 'bg-gray-400 text-gray-600 cursor-not-allowed'}`}
+                disabled={!selectedColor || !announcement || !announcementTitle} 
               >
                 Post Announcement
               </button>

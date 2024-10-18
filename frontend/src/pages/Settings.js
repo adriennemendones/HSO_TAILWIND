@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUserCircle, FaSearch, FaCog, FaBell, FaBars, FaChartBar, FaExclamationCircle, FaFileAlt, FaClipboardList, FaPaintBrush } from 'react-icons/fa';
+import { FaUserCircle, FaSearch, FaCog, FaBell, FaBars, FaChartBar, FaExclamationCircle, FaFileAlt, FaClipboardList, FaPaintBrush, FaChartLine } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
@@ -115,6 +115,7 @@ const Settings = () => {
               />
             </div>
             <div className="flex items-center space-x-2 relative">
+              <FaChartLine className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" onClick={() => navigate('/analytics')} />
               <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
               <FaUserCircle className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" onClick={() => navigate('/profile')} />
               <div className="relative">
@@ -122,9 +123,9 @@ const Settings = () => {
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                     <ul className="py-2">
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Help</li>
-                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => setShowLogoutModal(true)}>Logout</li>
+                      <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={() => navigate('/settings')}>Settings</li>
+                      <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`}>Help</li>
+                      <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={handleLogout}>Logout</li>
                     </ul>
                   </div>
                 )}

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaUserCircle, FaSearch, FaCog, FaBell, FaBars, FaChartBar, FaExclamationCircle, FaFileAlt, FaClipboardList, FaPaintBrush } from 'react-icons/fa'; 
-import { useNavigate } from 'react-router-dom';
+import { FaUserCircle, FaSearch, FaCog, FaBell, FaBars, FaChartBar, FaExclamationCircle, FaFileAlt, FaClipboardList, FaPaintBrush, FaChartLine } from 'react-icons/fa'; 
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const ColorLegend = () => {
     const navigate = useNavigate();
+    const location = useLocation(); // Get the current location
     const [menuActive, setMenuActive] = useState(false);
-    const [profileMenuVisible, setProfileMenuVisible] = useState(false);
+    const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+    const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
     const sideMenuRef = useRef(null);
     const settingsMenuRef = useRef(null);
 
@@ -41,19 +43,20 @@ const ColorLegend = () => {
         setMenuActive(prev => !prev);
     };
 
-    const toggleProfileMenu = () => {
-        setProfileMenuVisible(prev => !prev);
+    const toggleSettingsMenu = () => {
+        setShowSettingsMenu(prev => !prev);
     };
 
-    const logout = () => {
+    const handleLogout = () => {
+        // Log out logic (e.g., clear tokens, redirect)
         window.location.href = "/"; // Adjust the path if necessary
     };
 
-    // Close the profile menu if the user clicks outside of it
+    // Close the settings menu if the user clicks outside of it
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
-                setProfileMenuVisible(false);
+                setShowSettingsMenu(false);
             }
         };
 
@@ -64,12 +67,12 @@ const ColorLegend = () => {
     }, []);
 
     return (
-        <div className="flex min-h-screen bg-gray-100 overflow-hidden">
+        <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'} overflow-hidden`}>
             {/* Sidebar */}
             <aside
                 className={`shadow-md w-64 fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${menuActive ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
                 style={{
-                    background: 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
+                    background: theme === 'dark' ? '#2d2d2d' : 'linear-gradient(120deg, #4a0909, #4a0909, #fcd7d4, #610c0c)',
                     backgroundSize: '200% 200%',
                 }}
                 ref={sideMenuRef}
@@ -84,31 +87,31 @@ const ColorLegend = () => {
                 <nav className="mt-6">
                     <ul className="space-y-1">
                         <li>
-                            <a onClick={() => navigate('/dashboard')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+                            <a onClick={() => navigate('/dashboard')} className={`flex items-center px-4 py-2 text-white ${location.pathname === '/dashboard' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                                 <FaChartBar className="w-5 h-5 mr-2" />
                                 Dashboard
                             </a>
                         </li>
                         <li>
-                            <a onClick={() => navigate('/reports')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+                            <a onClick={() => navigate('/reports')} className={`flex items-center px-4 py-2 text-white ${location.pathname === '/reports' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                                 <FaExclamationCircle className="w-5 h-5 mr-2" />
                                 Incident Report
                             </a>
                         </li>
                         <li>
-                            <a onClick={() => navigate('/create')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+                            <a onClick={() => navigate('/create')} className={`flex items-center px-4 py-2 text-white ${location.pathname === '/create' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                                 <FaFileAlt className="w-5 h-5 mr-2" />
                                 Create Announcements
                             </a>
                         </li>
                         <li>
-                            <a onClick={() => navigate('/upload')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+                            <a onClick={() => navigate('/upload')} className={`flex items-center px-4 py-2 text-white ${location.pathname === '/upload' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                                 <FaClipboardList className="w-5 h-5 mr-2" />
                                 Upload Programs
                             </a>
                         </li>
                         <li>
-                            <a onClick={() => navigate('/color')} className="flex items-center px-4 py-2 text-white hover:bg-gray-400 transition-colors duration-300 rounded">
+                            <a onClick={() => navigate('/color')} className={`flex items-center px-4 py-2 text-white ${location.pathname === '/color' ? 'bg-gray-400' : 'hover:bg-gray-400'} transition-colors duration-300 rounded`}>
                                 <FaPaintBrush className="w-5 h-5 mr-2" />
                                 Color Wheel Legend
                             </a>
@@ -120,16 +123,17 @@ const ColorLegend = () => {
             {/* Main content */}
             <main className="flex-1 p-4 md:ml-64 flex flex-col">
                 {/* Navbar */}
-                <nav className="flex justify-between items-center bg-maroon p-2 rounded-lg shadow mb-4">
+                <nav className={`flex justify-between items-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-maroon'} p-2 rounded-lg shadow mb-4`}>
                     <div className="flex items-center">
                         <FaSearch className="w-4 h-4 mr-1 text-white" />
                         <input
                             type="text"
                             placeholder="Search"
-                            className="bg-gray-100 border-0 p-1 rounded-lg flex-grow focus:outline-none focus:ring focus:ring-gray-200 text-sm"
+                            className={`border-0 p-1 rounded-lg flex-grow focus:outline-none focus:ring focus:ring-gray-200 text-sm ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-100'}`}
                         />
                     </div>
                     <div className="flex items-center space-x-2 relative">
+                        <FaChartLine className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" onClick={() => navigate('/analytics')} />
                         <FaBell className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" />
                         <FaUserCircle 
                             className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
@@ -138,14 +142,14 @@ const ColorLegend = () => {
                         <div className="relative">
                             <FaCog 
                                 className="w-5 h-5 text-white hover:text-yellow-400 cursor-pointer" 
-                                onClick={toggleProfileMenu} 
+                                onClick={toggleSettingsMenu} 
                             />
-                            {profileMenuVisible && (
-                                <div ref={settingsMenuRef} className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10">
+                            {showSettingsMenu && (
+                                <div className="absolute right-0 mt-2 bg-white shadow-md rounded-lg z-10" ref={settingsMenuRef}>
                                     <ul className="py-2">
-                                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => navigate('/settings')}>Settings</li>
-                                        <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => alert('Help Clicked')}>Help</li>
-                                        <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={logout}>Logout</li>
+                                        <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={() => navigate('/settings')}>Settings</li>
+                                        <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`}>Help</li>
+                                        <li className={`px-4 py-2 ${theme === 'dark' ? 'text-black' : 'text-gray-800'} hover:bg-gray-200 cursor-pointer`} onClick={handleLogout}>Logout</li>
                                     </ul>
                                 </div>
                             )}
@@ -155,12 +159,12 @@ const ColorLegend = () => {
                 </nav>
 
                 {/* Color Legend Section */}
-                <div className="flex-grow bg-white rounded-lg p-2 shadow flex-grow flex flex-col items-center mb-2 border-2 border-gray-300">
-                    <h2 className="text-2xl font-bold text-center text-maroon mb-2 w-full">COLOR LEGEND</h2>
-                    <p className="text-center">List of colors and their corresponding meanings</p>
+                <div className={`flex-grow rounded-lg p-2 shadow flex-grow flex flex-col items-center mb-2 border-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} border-gray-300`}>
+                    <h2 className={`text-2xl font-bold text-center ${theme === 'dark' ? 'text-white' : 'text-maroon'} mb-2 w-full`}>COLOR LEGEND</h2>
+                    <p className={`text-center ${theme === 'dark' ? 'text-gray-400' : 'text-black'}`}>List of colors and their corresponding meanings</p>
                 </div>
 
-                <div className="flex-grow bg-white rounded-lg p-4 shadow flex flex-col md:flex-row items-center border-2 border-gray-300">
+                <div className={`flex-grow rounded-lg p-4 shadow flex flex-col md:flex-row items-center border-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} border-gray-300`}>
                     {/* Color Wheel Container */}
                     <div className="color-wheel-container flex justify-center items-center w-full md:w-1/2 mb-4 md:mb-0">
                         <svg viewBox="0 0 32 32" className="color-wheel animate-rotate" style={{ width: '280px', height: '280px' }}>
@@ -177,10 +181,10 @@ const ColorLegend = () => {
                     {/* Legend details */}
                     <div className="legend-container flex flex-col justify-center items-center md:w-1/2">
                         {colors.map((color) => (
-                            <div key={color.name} className="legend-item flex justify-between p-4 m-2 bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 w-full border-2 border-blue-200 hover:border-blue-500"> {/* Added border and hover effect */}
+                            <div key={color.name} className={`legend-item flex justify-between p-4 m-2 rounded-lg shadow hover:shadow-lg transition-shadow duration-200 w-full border-2 ${theme === 'dark' ? 'border-blue-600' : 'border-blue-200'} hover:border-blue-500`}>
                                 <span style={{ color: color.name.toLowerCase(), fontWeight: 'bold' }}>{color.name}:</span> 
                                 <div className="flex-grow text-right">
-                                    <p>{color.meaning}</p>
+                                    <p className={`${theme === 'dark' ? 'text-white' : 'text-black'}`}>{color.meaning}</p>
                                     <p className="text-sm text-gray-500">{color.description}</p>
                                 </div>
                             </div>
@@ -210,3 +214,5 @@ const ColorLegend = () => {
 };
 
 export default ColorLegend;
+
+//
